@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SOFTWARE="./software"
+RCFILES="./rcfiles"
+
 case "$1" in
     -d)
 	# Add neccessary repositories
@@ -9,16 +12,23 @@ case "$1" in
 	    echo "add-apt-repository -y $ppa"
 	done < "$ppafile"
 
-	# Install software
-	softwarefile="./software"
+	# Install software with apt
+	aptfile="$SOFTWARE/apt"
 	software=""
 	while read -r line; do
 	    software="$software $line"
-	done < "$softwarefile"
+	done < "$aptfile"
 	echo "apt install $software"
+
+	# Install software with pip
+	pipfile="$SOFTWARE/pip"
+	software=""
+	while read -r line; do
+	    software="$software $line"
+	done < "$pipfile"
+	echo "pip3 install $software"
 	;;
     *)
-	echo "No args"
 	# Add neccessary repositories
 	ppafile="./ppa"
 	while read -r line; do
@@ -29,20 +39,27 @@ case "$1" in
 	# Update all software
 	apt update && apt upgrade && apt dist-upgrade
 
-	# Install software
-	softwarefile="./software"
+	# Install software with apt
+	aptfile="$SOFTWARE/apt"
 	software=""
 	while read -r line; do
 	    software="$software $line"
-	done < "$softwarefile"
+	done < "$aptfile"
 	eval "apt install $software"
+
+	# Install software with pip
+	pipfile="$SOFTWARE/pip"
+	software=""
+	while read -r line; do
+	    software="$software $line"
+	done < "$pipfile"
+	eval "pip3 install $software"
 
 	# Install oh-my-zsh
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 	# Replace .zshrc and .nvimrc
-	cp ./zshrc $HOME/.zshrc
-	cp ./nvimrc $HOME/.nvimrc
+	cp $RCFILES/.* $HOME
 
 	# Create symlink to Windows
 	ln -s /mnt/c/Users/ogparry1/ $HOME/Windows
