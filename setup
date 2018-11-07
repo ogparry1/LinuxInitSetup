@@ -60,8 +60,5 @@ case "$1" in
 
 	# Replace .zshrc and .nvimrc
 	cp $RCFILES/.* $HOME
-
-	# Create symlink to Windows
-	ln -s /mnt/c/Users/ogparry1/ $HOME/Windows
 	;;
 esac
